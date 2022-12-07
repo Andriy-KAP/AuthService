@@ -1,4 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using IdentityServer4.Models;
+using IdentityServer4.Stores;
+using IdentityServer4.Test;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace AuthService
 {
@@ -11,24 +19,31 @@ namespace AuthService
         }
         public void ConfigureService(IServiceCollection services)
         {
-            services.AddId
-            services.AddMvc();
+             services.AddMvc();
+             services.AddIdentityServer()
+                .AddInMemoryPersistedGrants()
+                .AddInMemoryApiResources(new List<ApiResource>())
+                .AddInMemoryIdentityResources(new List<IdentityResource>())
+                .AddInMemoryApiScopes(new List<ApiScope>())
+                .AddInMemoryClients(new List<Client>())
+                .AddTestUsers(new List<TestUser>())
+                .AddDeveloperSigningCredential();
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 app.UseDeveloperExceptionPage();
-            }
-            app.UseStatusCodePages();
+            //}
             app.UseStaticFiles();
-
-            app.UseMvc(config =>
+            app.UseRouting();
+            app.UseIdentityServer();
+            app.UseEndpoints(endpoint =>
             {
-                config.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action}/{id?}"
-                );
+                endpoint.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
             });
             
         }
