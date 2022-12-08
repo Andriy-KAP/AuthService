@@ -17,35 +17,22 @@ namespace AuthService
         {
             Configuration = config;
         }
-        public void ConfigureService(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-             services.AddMvc();
-             services.AddIdentityServer()
-                .AddInMemoryPersistedGrants()
-                .AddInMemoryApiResources(new List<ApiResource>())
-                .AddInMemoryIdentityResources(new List<IdentityResource>())
-                .AddInMemoryApiScopes(new List<ApiScope>())
-                .AddInMemoryClients(new List<Client>())
-                .AddTestUsers(new List<TestUser>())
+            services.AddIdentityServer()
+                .AddInMemoryApiScopes(Config.GetApiScopes())
+                .AddInMemoryApiResources(Config.GetAllApiResources())
+                .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                .AddInMemoryClients(Config.GetClients())
                 .AddDeveloperSigningCredential();
         }
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-                app.UseDeveloperExceptionPage();
-            //}
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseIdentityServer();
-            app.UseEndpoints(endpoint =>
+            if (env.IsDevelopment())
             {
-                endpoint.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
-            });
-            
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseIdentityServer();
         }
     }
 }
