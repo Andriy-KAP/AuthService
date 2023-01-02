@@ -19,7 +19,7 @@ namespace AuthService
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentityServer()
+            services.AddIdentityServer(_=>_.Endpoints.EnableJwtRequestUri = true)
                 .AddInMemoryApiScopes(Config.GetApiScopes())
                 .AddInMemoryApiResources(Config.GetAllApiResources())
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())

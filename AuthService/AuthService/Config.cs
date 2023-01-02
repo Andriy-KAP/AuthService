@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.Models;
+using IdentityServer4.Validation;
 using System.Collections.Generic;
 
 namespace AuthService
@@ -9,7 +10,7 @@ namespace AuthService
         {
             return new List<ApiScope>
             {
-                new ApiScope("UJournalDAL", "UJournalDAL students data access layer")
+                new ApiScope("UJournalDALScope", "UJournalDAL students data access layer")
             };
         }
 
@@ -26,7 +27,12 @@ namespace AuthService
         {
             return new List<ApiResource> 
             {
-                new ApiResource("UJournalDAL", "Student API for UJournal")
+                new ApiResource
+                {
+                    Name = "UJournalDALResource",
+                    DisplayName = "Student API for UJournal",
+                    Scopes = new List<string> {"UJournalDALScope"}
+                }
             };
         } 
 
@@ -41,7 +47,7 @@ namespace AuthService
                     {
                         new Secret("secret".Sha256())
                     },
-                    AllowedScopes = { "UJournalDAL" }
+                    AllowedScopes = { "UJournalDALScope" }
                 }
             };
         }
